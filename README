@@ -1,0 +1,40 @@
+1. Description
+
+- fitnesse-gradle-classpath plugin will let you to use gradle build files to manage dependencies in FitNesse tests
+
+2. How to build
+
+- clone git repository
+- invoke gradle build command
+- the jar with plugin code will be at build/libs/fitnesse-gradle-classpath.jar
+
+3. How to use
+
+- create plugins.properties file in FitNesse root directory if it does not exist
+- add the following line
+    SymbolTypes=fitnesse.wikitext.widgets.GradleClasspathSymbolType
+- copy fitnesse-gradle-classpath.jar to plugins directory in FitNesse root directory
+- start FitNesse as usual
+- you should see the following message in FitNesse console
+    Custom symbol types loaded:
+    		fitnesse.wikitext.widgets.GradleClasspathSymbolType
+- now you can add the following tag in FitNesse pages
+	!gradle /Users/mclovin/development/resources/fitnesse.gradle@test
+- FitNesse page will show information on the source location, scope, all resolved libraries, and any non-resolved dependencies
+
+4. Customization
+
+- plugin is using the following mapping for scopes (@ indicates plugin scope)
+    @test(default)
+        testCompile
+        testRuntime
+    @compile
+    	compile
+    @runtime
+    	runtime
+
+
+
+
+
+

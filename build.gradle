@@ -1,0 +1,31 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo.springsource.org/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.1'
+    }
+}
+
+apply plugin: 'java'
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+}
+
+repositories {
+    maven {
+        url 'http://repo.gradle.org/gradle/libs-releases-local'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.gradle:gradle-tooling-api:1.6'
+    provided 'org.fitnesse:fitnesse:20130531'
+    testCompile 'junit:junit:4.11'
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}

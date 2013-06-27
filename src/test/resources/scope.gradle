@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+repositories {
+    maven {
+        url 'http://repo.gradle.org/gradle/libs-releases-local'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'javax.servlet:servlet-api:2.5'
+    testCompile 'org.hamcrest:hamcrest-all:1.0'
+}
