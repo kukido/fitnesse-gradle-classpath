@@ -5,8 +5,6 @@ import util.Maybe;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class GradleClasspathSymbolType extends SymbolType implements Rule, Translation, PathsProvider
 {
@@ -24,29 +22,20 @@ public class GradleClasspathSymbolType extends SymbolType implements Rule, Trans
 		htmlTranslation(this);
 	}
 
-	private List<String> getClasspathEntries(Translator translator, Symbol symbol)
+	private Dependencies getDependencies(Translator translator, Symbol symbol)
 	{
-		try
-		{
-			GradleClasspathSymbol gradleClasspathSymbol = getGradleClasspathSymbol(translator, symbol);
+		GradleClasspathSymbol gradleClasspathSymbol = getGradleClasspathSymbol(translator, symbol);
 
-			String scope = gradleClasspathSymbol.getScope();
-			File source = gradleClasspathSymbol.getSource();
+		String scope = gradleClasspathSymbol.getScope();
+		File source = gradleClasspathSymbol.getSource();
 
-			return gradleClasspathProcessor.getClasspathEntries(source, scope);
-		}
-		catch (Exception exc)
-		{
-			exc.printStackTrace();
-			// noinspection unchecked
-			return Collections.EMPTY_LIST;
-		}
+		return gradleClasspathProcessor.getDependencies(source, scope);
 	}
 
 	@Override
 	public Collection<String> providePaths(Translator translator, Symbol symbol)
 	{
-		return getClasspathEntries(translator, symbol);
+		return getDependencies(translator, symbol).getResolvedDependencies();
 	}
 
 	@Override
@@ -79,29 +68,49 @@ public class GradleClasspathSymbolType extends SymbolType implements Rule, Trans
 	@Override
 	public String toTarget(Translator translator, Symbol symbol)
 	{
-		List<String> classpathEntries = null;
 		GradleClasspathSymbol gradleClasspathSymbol = getGradleClasspathSymbol(translator, symbol);
-		StringBuilder classpathForRender = new StringBuilder("<p class='meta'>Gradle classpath [file: ")
+
+		StringBuilder output = new StringBuilder("<p class='meta'>Gradle classpath [file: ")
 				.append(gradleClasspathSymbol.getSource().getAbsolutePath())
 				.append(", scope: ")
 				.append(gradleClasspathSymbol.getScope())
-				.append("]:</p>")
-				.append("<ul class='meta'>");
+				.append("]:</p>");
+
+
 		try
 		{
-			classpathEntries = getClasspathEntries(translator, symbol);
-			for (String classpathEntry : classpathEntries)
+			Dependencies dependencies = getDependencies(translator, symbol);
+
+			output.append("<ul class='meta'>");
+
+			for (String resolvedDependency : dependencies.getResolvedDependencies())
 			{
-				classpathForRender.append("<li>").append(classpathEntry).append("</li>");
+				output
+						.append("<li>")
+						.append(resolvedDependency)
+						.append("</li>");
 			}
+
+			for (String unresolvedDependency : dependencies.getUnresolvedDependencies())
+			{
+				output
+						.append("<li class='error'>")
+						.append(unresolvedDependency)
+						.append("</li>");
+			}
+
+			output.append("</ul>");
+
 		}
-		catch (Exception e)
+		catch (Exception exc)
 		{
-			classpathForRender.append("<li class='error'>Unable to parse POM file: ")
-					.append(e.getMessage()).append("</li>");
+			output
+				.append("<p class='error'>Unable to parse Gradle file: ")
+				.append(exc.getMessage())
+				.append("</p>");
 		}
-		classpathForRender.append("</ul>");
-		return classpathForRender.toString();
+
+		return output.toString();
 	}
 
 	public GradleClasspathSymbol getGradleClasspathSymbol(Translator translator, Symbol symbol)

@@ -6,16 +6,15 @@ import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.idea.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GradleClasspathProcessor
 {
 	public static final String BUILD_FILE_FLAG = "--build-file";
+	public static final String UNRESOLVED_DEPENDENCY_PREFIX = "unresolved dependency";
 
-	public List<String> getClasspathEntries(File source, String scope)
+	public Dependencies getDependencies(File source, String scope)
 	{
-		List<String> classpathEntries = new ArrayList<String>();
+		Dependencies dependencies = new Dependencies();
 
 		GradleConnector connector = GradleConnector.newConnector();
 
@@ -41,7 +40,15 @@ public class GradleClasspathProcessor
 						IdeaDependencyScope ideaDependencyScope = ideaDependency.getScope();
 						if (ideaDependencyScope.getScope().equalsIgnoreCase(scope))
 						{
-							classpathEntries.add(ideaDependency.getFile().getAbsolutePath());
+							String name = ideaDependency.getFile().getName();
+							if (name.startsWith(UNRESOLVED_DEPENDENCY_PREFIX))
+							{
+								dependencies.addUnresolvedDependency(name);
+							}
+							else
+							{
+							 	dependencies.addResolvedDependency(ideaDependency.getFile().getAbsolutePath());
+							}
 						}
 					}
 				}
@@ -51,6 +58,7 @@ public class GradleClasspathProcessor
 		{
 			connection.close();
 		}
-		return classpathEntries;
+
+		return dependencies;
 	}
 }

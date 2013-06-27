@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'org.hamcrest:hamcrest-all:1.0'
+    testCompile 'non-existing-library:non-existing-library-core:1.0'
+}

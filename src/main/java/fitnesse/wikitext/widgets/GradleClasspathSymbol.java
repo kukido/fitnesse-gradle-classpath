@@ -5,6 +5,7 @@ import java.io.File;
 public class GradleClasspathSymbol
 {
 	public static final String DEFAULT_SCOPE = "TEST";
+	public static final String SCOPE_SEPARATOR_CHARACTER = "@";
 
 	private String symbol;
 	private String scope;
@@ -19,12 +20,11 @@ public class GradleClasspathSymbol
 
 	public void parse()
 	{
-		String separator = "@";
 		String path;
 
-		if (symbol.contains(separator))
+		if (symbol.contains(SCOPE_SEPARATOR_CHARACTER))
 		{
-			String[] values = symbol.split(separator);
+			String[] values = symbol.split(SCOPE_SEPARATOR_CHARACTER);
 			path = values[0];
 			scope = values[1];
 		}
@@ -48,6 +48,7 @@ public class GradleClasspathSymbol
 		return scope;
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public boolean equals(Object o)
 	{

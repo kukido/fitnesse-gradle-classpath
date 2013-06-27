@@ -20,26 +20,36 @@ public class GradleClasspathProcessorTest
 	}
 
 	@Test
-	public void testGetClasspathEntriesWithInvalidGradle()
+	public void testGetDependenciesWithInvalidGradle()
 	{
 		File source = getResource("invalid.gradle");
-		List<String> result = processor.getClasspathEntries(source, null);
-		assertTrue(result.isEmpty());
+		Dependencies result = processor.getDependencies(source, null);
+		assertTrue(result.getResolvedDependencies().isEmpty());
+		assertTrue(result.getUnresolvedDependencies().isEmpty());
 	}
 
 	@Test
-	public void testGetClasspathEntriesWithLibrariesInScope()
+	public void testGetDependenciesWithLibrariesInScope()
 	{
 		File source = getResource("scope.gradle");
-		List<String> result = processor.getClasspathEntries(source, "compile");
+		List<String> result = processor.getDependencies(source, "compile").getResolvedDependencies();
 		assertEquals(2, result.size());
 	}
 
 	@Test
-	public void testGetClasspathEntriesWithNoLibrariesInScope()
+	public void testGetDependenciesWithUnresolvedDependency()
+	{
+		File source = getResource("unresolved.gradle");
+		Dependencies result = processor.getDependencies(source, "test");
+		assertEquals(1, result.getUnresolvedDependencies().size());
+		assertEquals(1, result.getResolvedDependencies().size());
+	}
+
+	@Test
+	public void testGetDependenciesWithNoLibrariesInScope()
 	{
 		File source = getResource("scope.gradle");
-		List<String> result = processor.getClasspathEntries(source, "runtime");
+		List<String> result = processor.getDependencies(source, "runtime").getResolvedDependencies();
 		assertTrue(result.isEmpty());
 	}
 
