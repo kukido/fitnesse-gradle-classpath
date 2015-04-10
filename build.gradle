@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     compile 'org.gradle:gradle-tooling-api:1.6'
-    provided 'org.fitnesse:fitnesse:20130531'
+    provided 'org.fitnesse:fitnesse:20150226'
     testCompile 'junit:junit:4.11'
 }
 
