@@ -1,7 +1,7 @@
 package fitnesse.wikitext.widgets;
 
 import fitnesse.wikitext.parser.*;
-import util.Maybe;
+import fitnesse.wikitext.parser.Maybe;
 
 import java.io.File;
 import java.util.Collection;
