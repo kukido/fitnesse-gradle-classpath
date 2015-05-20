@@ -1,3 +1,9 @@
+ATTENTION! THIS PROJECT IS NOT MAINTAINED! 
+
+As I no longer work with FitNesse/Gradle, and considering a low number of users, I would like to resign from my duty of maintaining this project.
+
+05/19/2015
+
 1. Description
 
 - fitnesse-gradle-classpath plugin will let you to use gradle build files to manage dependencies in FitNesse tests
